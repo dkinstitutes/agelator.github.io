@@ -14,6 +14,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="canonical" href="https://agecalcu.com/" />
+    <link rel="manifest" href="/manifest.json">
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-13L190C1L6"></script>
 <script>
@@ -313,62 +314,62 @@
   </div>
    </div>
    <script>
-// Check if the user is on a mobile device and if the web app manifest is supported
-if (('standalone' in window.navigator) || window.matchMedia('(display-mode: standalone)').matches) {
-  console.log('Web app is installed and running in standalone mode');
-} else {
-  console.log('Web app is not installed');
-  const installPrompt = document.createElement('div');
-  installPrompt.setAttribute('class', 'install-prompt');
-  installPrompt.innerHTML = `
-    <div class="install-prompt__container">
-      <div class="install-prompt__icon">
-        <img src="android-chrome-192x192.png" alt="App Icon">
-      </div>
-      <div class="install-prompt__text">
-        <h3 class="install-prompt__title">Install App?</h3>
-        <p class="install-prompt__description">Add this app to your home screen for quick and easy access.</p>
-      </div>
-      <div class="install-prompt__button-container">
-        <button class="install-prompt__button" id="install-button">Install</button>
-        <button class="install-prompt__button--cancel" id="cancel-button">Cancel</button>
-      </div>
+window.addEventListener('load', () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service worker registered:', registration);
+      })
+      .catch(error => {
+        console.error('Error registering service worker:', error);
+      });
+  }
+});
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  deferredPrompt = event;
+  showAddToHomeScreen();
+});
+
+function showAddToHomeScreen() {
+  const addToHomeScreen = document.createElement('div');
+  addToHomeScreen.setAttribute('id', 'add-to-home-screen');
+  addToHomeScreen.innerHTML = `
+    <div>
+      <button id="add-to-home-screen-button">Add to Home Screen</button>
+      <button id="cancel-add-to-home-screen-button">Cancel</button>
     </div>
   `;
-  document.body.appendChild(installPrompt);
-  
-  // Add event listener to install button
-  const installButton = document.querySelector('#install-button');
-  installButton.addEventListener('click', () => {
-    const deferredPrompt = window.deferredPrompt;
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-        } else {
-          console.log('User dismissed the install prompt');
-        }
-        window.deferredPrompt = null;
-        installPrompt.remove();
-      });
-    }
-  });
+  document.body.appendChild(addToHomeScreen);
 
-  // Add event listener to cancel button
-  const cancelButton = document.querySelector('#cancel-button');
-  cancelButton.addEventListener('click', () => {
-    console.log('User dismissed the install prompt');
-    installPrompt.remove();
-  });
+  const addToHomeScreenButton = document.getElementById('add-to-home-screen-button');
+  addToHomeScreenButton.addEventListener('click', addToHomeScreenPrompt);
+
+  const cancelAddToHomeScreenButton = document.getElementById('cancel-add-to-home-screen-button');
+  cancelAddToHomeScreenButton.addEventListener('click', cancelAddToHomeScreenPrompt);
 }
 
-// Listen for the "beforeinstallprompt" event to capture the deferred prompt
-window.addEventListener('beforeinstallprompt', (event) => {
-  console.log('beforeinstallprompt fired');
-  event.preventDefault();
-  window.deferredPrompt = event;
-});
+function addToHomeScreenPrompt() {
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice
+    .then(choiceResult => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User added to home screen');
+      } else {
+        console.log('User declined to add to home screen');
+      }
+      deferredPrompt = null;
+      document.getElementById('add-to-home-screen').remove();
+    });
+}
+
+function cancelAddToHomeScreenPrompt() {
+  deferredPrompt = null;
+  document.getElementById('add-to-home-screen').remove();
+}
 
    </script>
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
