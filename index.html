@@ -313,56 +313,61 @@
   </div>
    </div>
    <script>
-let deferredPrompt;
+// Check if the user is on a mobile device and if the web app manifest is supported
+if (('standalone' in window.navigator) || window.matchMedia('(display-mode: standalone)').matches) {
+  console.log('Web app is installed and running in standalone mode');
+} else {
+  console.log('Web app is not installed');
+  const installPrompt = document.createElement('div');
+  installPrompt.setAttribute('class', 'install-prompt');
+  installPrompt.innerHTML = `
+    <div class="install-prompt__container">
+      <div class="install-prompt__icon">
+        <img src="android-chrome-192x192.png" alt="App Icon">
+      </div>
+      <div class="install-prompt__text">
+        <h3 class="install-prompt__title">Install App?</h3>
+        <p class="install-prompt__description">Add this app to your home screen for quick and easy access.</p>
+      </div>
+      <div class="install-prompt__button-container">
+        <button class="install-prompt__button" id="install-button">Install</button>
+        <button class="install-prompt__button--cancel" id="cancel-button">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(installPrompt);
+  
+  // Add event listener to install button
+  const installButton = document.querySelector('#install-button');
+  installButton.addEventListener('click', () => {
+    const deferredPrompt = window.deferredPrompt;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        window.deferredPrompt = null;
+        installPrompt.remove();
+      });
+    }
+  });
 
+  // Add event listener to cancel button
+  const cancelButton = document.querySelector('#cancel-button');
+  cancelButton.addEventListener('click', () => {
+    console.log('User dismissed the install prompt');
+    installPrompt.remove();
+  });
+}
+
+// Listen for the "beforeinstallprompt" event to capture the deferred prompt
 window.addEventListener('beforeinstallprompt', (event) => {
-  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  console.log('beforeinstallprompt fired');
   event.preventDefault();
-
-  // Stash the event so it can be triggered later.
-  deferredPrompt = event;
-
-  // Show the add to home screen button
-  showAddToHomeScreen();
-});
-
-function showAddToHomeScreen() {
-  const a2hsBtn = document.createElement('button');
-  a2hsBtn.setAttribute('id', 'install-button');
-  a2hsBtn.innerHTML = 'Add to Home Screen';
-  a2hsBtn.addEventListener('click', addToHomeScreen);
-
-  const a2hsContainer = document.createElement('div');
-  a2hsContainer.setAttribute('id', 'install-container');
-  a2hsContainer.appendChild(a2hsBtn);
-
-  document.body.appendChild(a2hsContainer);
-}
-
-function addToHomeScreen() {
-  // hide our user interface that shows our A2HS button
-  const a2hsContainer = document.getElementById('install-container');
-  a2hsContainer.style.display = 'none';
-
-  // Show the install prompt
-  deferredPrompt.prompt();
-
-  // Wait for the user to respond to the prompt
-  deferredPrompt.userChoice
-    .then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the A2HS prompt');
-      } else {
-        console.log('User dismissed the A2HS prompt');
-      }
-
-      // Clear the deferredPrompt so it can be garbage collected
-      deferredPrompt = null;
-    });
-}
-
-window.addEventListener('appinstalled', (evt) => {
-  console.log('App installed successfully!', evt);
+  window.deferredPrompt = event;
 });
 
    </script>
