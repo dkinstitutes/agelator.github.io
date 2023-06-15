@@ -9,6 +9,7 @@
     content="Agecalcu is the most popular age calculator that calculate your age in different variations including seconds and milliseconds based on your date of birth."/>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -45,6 +46,56 @@
       .navbar-light .navbar-nav .nav-link.active{
         color: white;
       }
+      .download-button {
+  display: inline-block;
+  padding: 3px 25px;
+  background-image: linear-gradient( 135deg, #0f9 0%, #60f 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 50px;
+  border: none;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.6s ease;
+  position: relative;
+  overflow: hidden;
+  animation: pulse 2s infinite;
+}
+
+.download-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  animation: none;
+  border: none;
+}
+
+.download-button span {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
+  }
+  25% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.6);
+  }
+  50% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 123, 255, 0.4); 
+  }
+}
+
 
     </style>
   </head>
