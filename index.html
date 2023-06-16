@@ -384,85 +384,101 @@
     </ul>
   </div>
    </div>
+   <script src="https://storage.googleapis.com/workbox-cdn/releases/6.3.0/workbox-sw.js"></script>
+
    <script>
-    let deferredPrompt;
-  
-    // Check if the browser supports the beforeinstallprompt event
-    if ('onbeforeinstallprompt' in window) {
-      window.addEventListener('beforeinstallprompt', (event) => {
-        event.preventDefault();
-        deferredPrompt = event;
-  
-        // Show the install button if the app isn't already installed
-        if (!isAppInstalled()) {
-          showInstallButton();
-        } else {
-          showNotification('App Already Installed');
-        }
-      });
-    } else {
-      // Display a banner or message for unsupported browsers
-      displayUnsupportedMessage();
-    }
-  
-    // Handle install button click
-    document.getElementById('installButton').addEventListener('click', () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-  
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the install prompt');
-          } else {
-            console.log('User dismissed the install prompt');
-          }
-  
-          // Reset the deferred prompt
-          deferredPrompt = null;
-        });
-      }
-    });
-  
-    // Check if the app is already installed
-    function isAppInstalled() {
-      // Check if the browser supports display-mode: standalone
-      if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
-        return true; // The app is already installed
-      }
-  
-      // Check if the browser supports display-mode: fullscreen
-      if (window.matchMedia('(display-mode: fullscreen)').matches) {
-        return true; // The app is already installed
-      }
-  
-      return false; // The app is not installed
-    }
-  
-    // Show install button
-    function showInstallButton() {
-      // Check if the install button is already visible
-      if (document.getElementById('installButton').style.display !== 'block') {
-        document.getElementById('installButton').style.display = 'block';
-      }
-    }
-  
-    // Show notification to the user
-    function showNotification(message) {
-      // Replace this with your actual notification implementation
-      alert(message);
-    }
-  
-    // Display a banner or message for unsupported browsers
-    function displayUnsupportedMessage() {
-      const unsupportedMessage = document.createElement('div');
-      unsupportedMessage.textContent = 'Unfortunately, your browser does not support installing this app. Please use a supported browser or follow the manual installation instructions.';
-      unsupportedMessage.style.backgroundColor = '#f8d7da';
-      unsupportedMessage.style.color = '#721c24';
-      unsupportedMessage.style.padding = '10px';
-      unsupportedMessage.style.marginBottom = '10px';
-      document.body.prepend(unsupportedMessage);
-    }
-  </script>
+     // Register the service worker
+     if ('serviceWorker' in navigator) {
+       window.addEventListener('load', () => {
+         navigator.serviceWorker.register('/sw.js')
+           .then((registration) => {
+             console.log('Service Worker registered: ', registration);
+           })
+           .catch((error) => {
+             console.error('Service Worker registration failed: ', error);
+           });
+       });
+     }
+   
+     let deferredPrompt;
+   
+     // Check if the browser supports the beforeinstallprompt event
+     if ('onbeforeinstallprompt' in window) {
+       window.addEventListener('beforeinstallprompt', (event) => {
+         event.preventDefault();
+         deferredPrompt = event;
+   
+         // Show the install button if the app isn't already installed
+         if (!isAppInstalled()) {
+           showInstallButton();
+         } else {
+           showNotification('App Already Installed');
+         }
+       });
+     } else {
+       // Display a banner or message for unsupported browsers
+       displayUnsupportedMessage();
+     }
+   
+     // Handle install button click
+     document.getElementById('installButton').addEventListener('click', () => {
+       if (deferredPrompt) {
+         deferredPrompt.prompt();
+   
+         deferredPrompt.userChoice.then((choiceResult) => {
+           if (choiceResult.outcome === 'accepted') {
+             console.log('User accepted the install prompt');
+           } else {
+             console.log('User dismissed the install prompt');
+           }
+   
+           // Reset the deferred prompt
+           deferredPrompt = null;
+         });
+       }
+     });
+   
+     // Check if the app is already installed
+     function isAppInstalled() {
+       // Check if the browser supports display-mode: standalone
+       if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+         return true; // The app is already installed
+       }
+   
+       // Check if the browser supports display-mode: fullscreen
+       if (window.matchMedia('(display-mode: fullscreen)').matches) {
+         return true; // The app is already installed
+       }
+   
+       return false; // The app is not installed
+     }
+   
+     // Show install button
+     function showInstallButton() {
+       // Check if the install button is already visible
+       if (document.getElementById('installButton').style.display !== 'block') {
+         document.getElementById('installButton').style.display = 'block';
+       }
+     }
+   
+     // Show notification to the user
+     function showNotification(message) {
+       // Replace this with your actual notification implementation
+       alert(message);
+     }
+   
+     // Display a banner or message for unsupported browsers
+     function displayUnsupportedMessage() {
+       const unsupportedMessage = document.createElement('div');
+       unsupportedMessage.textContent = 'Unfortunately, your browser does not support installing this app. Please use a supported browser or follow the manual installation instructions.';
+       unsupportedMessage.style.backgroundColor = '#f8d7da';
+       unsupportedMessage.style.color = '#721c24';
+       unsupportedMessage.style.padding = '10px';
+       unsupportedMessage.style.marginBottom = '10px';
+       document.body.prepend(unsupportedMessage);
+     }
+   </script>
+   
   
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script async src="https://static.addtoany.com/menu/page.js"></script>
