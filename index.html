@@ -45,57 +45,59 @@
       .navbar-light .navbar-nav .nav-link.active{
         color: white;
       }
-    .download-button {
-      display: inline-block;
-      padding: 10px 25px;
-      margin-top: -10px;
-      background-image: linear-gradient( 135deg, #0f9 0%, #60f 100%);
-      color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 10px;
-      border: none;
-      display: block;
-      margin: 0 auto;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, transform 0.6s ease;
-      position: relative;
-      overflow: hidden;
-      animation: pulse 2s infinite;
-    }
+      .download-button {
+  display: inline-block;
+  padding: 10px 25px;
+  margin-top: -10px;
+  background-image: linear-gradient( 135deg, #0f9 0%, #60f 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 10px;
+  border: none;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.6s ease;
+  position: relative;
+  overflow: hidden;
+  animation: pulse 2s infinite;
+}
 
-    .download-button:hover {
-      background-color: #0056b3;
-      transform: translateY(-2px);
-      animation: none;
-      border: none;
-    }
+.download-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  animation: none;
+  border: none;
+}
 
-    .download-button span {
-      position: relative;
-      z-index: 2;
-    }
+.download-button span {
+  position: relative;
+  z-index: 2;
+}
 
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
-      }
-      25% {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(0, 123, 255, 0.6);
-      }
-      50% {
-        transform: scale(1);
-        box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
-      }
-      100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 rgba(0, 123, 255, 0.4); 
-      }
-    }
-  </style>
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
+  }
+  25% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.6);
+  }
+  50% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 123, 255, 0.4); 
+  }
+}
+
+
+    </style>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-warning mt-2" style="border-radius: 10px;
@@ -382,94 +384,58 @@
     </ul>
   </div>
    </div>
-
    <script>
     let deferredPrompt;
-    let installButton = document.getElementById('installButton');
-
-    // Check if the browser supports the beforeinstallprompt event
-    if ('onbeforeinstallprompt' in window) {
-      window.addEventListener('beforeinstallprompt', (event) => {
-        event.preventDefault();
-        deferredPrompt = event;
-
-        // Show the install button if the app isn't already installed
-        if (!isAppInstalled()) {
-          showInstallButton();
-        } else {
-          showNotification('App Already Installed');
-        }
-      });
-    } else {
-      // Display unsupported browser notification
-      displayUnsupportedMessage();
-    }
-
+  
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+  
+      // Show the install button if the app isn't already installed
+      if (!isAppInstalled()) {
+          document.getElementById('installButton').style.display = 'block';
+      } else {
+        showNotification('App Already Installed');
+      }
+    });
+  
     // Handle install button click
-    installButton.addEventListener('click', () => {
+    document.getElementById('installButton').addEventListener('click', () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-
+  
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
             console.log('User accepted the install prompt');
           } else {
             console.log('User dismissed the install prompt');
           }
-
+  
           // Reset the deferred prompt
           deferredPrompt = null;
         });
       }
     });
-
+  
     // Check if the app is already installed
     function isAppInstalled() {
-      // Check if the browser supports display-mode: standalone
       if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
         return true; // The app is already installed
       }
-
-      // Check if the browser supports display-mode: fullscreen
+  
+      // Check if the app is installed using older methods
       if (window.matchMedia('(display-mode: fullscreen)').matches) {
         return true; // The app is already installed
       }
-
+  
       return false; // The app is not installed
     }
-
-    // Show install button
-    function showInstallButton() {
-      installButton.style.display = 'block';
-    }
-
-    // Hide install button
-    function hideInstallButton() {
-      installButton.style.display = 'none';
-    }
-
+  
     // Show notification to the user
     function showNotification(message) {
       // Replace this with your actual notification implementation
       alert(message);
     }
-
-    // Display unsupported browser notification
-    function displayUnsupportedMessage() {
-      const unsupportedMessage = document.createElement('div');
-      unsupportedMessage.textContent = 'Unfortunately, your browser does not support installing this app. Please use a supported browser or follow the manual installation instructions.';
-      unsupportedMessage.style.backgroundColor = '#f8d7da';
-      unsupportedMessage.style.color = '#721c24';
-      unsupportedMessage.style.padding = '10px';
-      unsupportedMessage.style.marginBottom = '10px';
-      document.body.prepend(unsupportedMessage);
-    }
-
-    // Listen for app installed event
-    window.addEventListener('appinstalled', () => {
-      hideInstallButton();
-      showNotification('App Installed');
-    });
   </script>
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script async src="https://static.addtoany.com/menu/page.js"></script>
